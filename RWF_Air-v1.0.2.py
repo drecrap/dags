@@ -122,21 +122,21 @@ op3_ = SSHOperator(
 op_swf_a = SubDagOperator(
   subdag=sub_dag_a('RWF_Air-v1.0.2', 'swfA', dag.start_date,
                  dag.schedule_interval),
-  task_id='SWF_A',
+  task_id='swfA',
   dag=dag,
 )
 
 op_swf_b = SubDagOperator(
   subdag=sub_dag_b('RWF_Air-v1.0.2', 'swfB', dag.start_date,
                  dag.schedule_interval),
-  task_id='SWF_B',
+  task_id='swfB',
   dag=dag,
 )
 
 op_swf_c = SubDagOperator(
   subdag=sub_dag_c('RWF_Air-v1.0.2', 'swfC', dag.start_date,
                  dag.schedule_interval),
-  task_id='SWF_C',
+  task_id='swfC',
   dag=dag,
 )
 
