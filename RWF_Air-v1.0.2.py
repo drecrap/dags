@@ -22,14 +22,14 @@ default_args = {
 }
 
 dag = DAG(
-    'RWF_Air-v1.0.1',  #update version whenever you change something
+    'RWF_Air-v1.0.2',  #update version whenever you change something
     default_args=default_args,
     start_date=datetime(2019, 10, 31),
     schedule_interval='0 0 * * *'
     )
 
 latest_only = LatestOnlyOperator(
-    task_id='latest_only', 
+    task_id='Nur_Aktueller_Run', 
     dag=dag
     )
 
@@ -51,18 +51,18 @@ def branch_func_1(**kwargs):
         return 'goto_branch_task_succ'
 
 branch_op1 = BranchPythonOperator(
-    task_id='branch_task1',
+    task_id='Prüfe_Job1-Erfolg',
     provide_context=True,
     python_callable=branch_func_1,
     dag=dag)
 
 op_branch_op1_fail = DummyOperator(
-    task_id='goto_branch_task_succ', 
+    task_id='Job1_fehlgeschlagen', 
     dag=dag
     )
 
 op2 = SSHOperator(
-    task_id="Job2",
+    task_id="Job1_erfolgreich..Job2",
     ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
     command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh RWF_AIR {{run_id}} Job2; echo $?",
     do_xcom_push=True,
@@ -79,13 +79,13 @@ def branch_func_2(**kwargs):
         return 'Job3'
 
 branch_op2 = BranchPythonOperator(
-    task_id='branch_task2',
+    task_id='Prüfe_Job2-Erfolg',
     provide_context=True,
     python_callable=branch_func_2,
     dag=dag)
 
 op3 = SSHOperator(
-    task_id="Job3",
+    task_id="Job2_fehlgeschlagen..Job3",
     ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
     command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh RWF_AIR {{run_id}} Job3; echo $?",
     do_xcom_push=True,
@@ -102,46 +102,46 @@ def branch_func_3(**kwargs):
         return 'FailMail'
 
 branch_op3 = BranchPythonOperator(
-    task_id='branch_task3',
+    task_id='Prüfe_Job3-Erfolg',
     provide_context=True,
     python_callable=branch_func_3,
     dag=dag)
 
+op_split = DummyOperator(
+    task_id='Job2_erfolgreich', 
+    dag=dag
+    )
+
 op3_ = SSHOperator(
-    task_id="Job3_",
+    task_id="Job3",
     ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
     command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh RWF_AIR {{run_id}} Job3; echo $?",
     do_xcom_push=True,
     dag=dag)
 
-op_split = DummyOperator(
-    task_id='split', 
-    dag=dag
-    )
-
 op_swf_a = SubDagOperator(
-  subdag=sub_dag_a('RWF_Air-v1.0.1', 'swfA', dag.start_date,
+  subdag=sub_dag_a('RWF_Air-v1.0.2', 'swfA', dag.start_date,
                  dag.schedule_interval),
-  task_id='swfA',
+  task_id='SWF_A',
   dag=dag,
 )
 
 op_swf_b = SubDagOperator(
-  subdag=sub_dag_b('RWF_Air-v1.0.1', 'swfB', dag.start_date,
+  subdag=sub_dag_b('RWF_Air-v1.0.2', 'swfB', dag.start_date,
                  dag.schedule_interval),
-  task_id='swfB',
+  task_id='SWF_B',
   dag=dag,
 )
 
 op_swf_c = SubDagOperator(
-  subdag=sub_dag_c('RWF_Air-v1.0.1', 'swfC', dag.start_date,
+  subdag=sub_dag_c('RWF_Air-v1.0.2', 'swfC', dag.start_date,
                  dag.schedule_interval),
-  task_id='swfC',
+  task_id='SWF_C',
   dag=dag,
 )
 
-op_join = DummyOperator(
-    task_id='join', 
+op_fork = DummyOperator(
+    task_id='Fork', 
     dag=dag
     )
 
@@ -152,8 +152,8 @@ def branch_func_succ(**kwargs):
     retCode_1 = str(xcom_value_1)[-4:-3]
     xcom_value_2 = ti.xcom_pull(task_ids='Job1')
     print(xcom_value_2)
-    xcom_value_42 = ti.xcom_pull(task_ids='branch_task_success', dag_id='RWF_Air-v1.0.1.swfA', key='WfSucc')
-    print('RWF_Air-v1.0.1.swfA WfSucc: %s' % xcom_value_42)
+    xcom_value_42 = ti.xcom_pull(task_ids='branch_task_success', dag_id='RWF_Air-v1.0.2.swfA', key='WfSucc')
+    print('RWF_Air-v1.0.2.swfA WfSucc: %s' % xcom_value_42)
     retCode_2 = str(xcom_value_2)[-4:-3]
     print(retCode_1)
     print(retCode_2)
@@ -163,20 +163,20 @@ def branch_func_succ(**kwargs):
         return 'FailMail'
 
 branch_op_succ = BranchPythonOperator(
-    task_id='branch_task_succ',
+    task_id='Prüfe_WF-Erfolg',
     trigger_rule= 'one_success',
     provide_context=True,
     python_callable=branch_func_succ,
     dag=dag)
 
 op4 = SSHOperator(
-    task_id="Job4",
+    task_id="WF_erfolgreich..Job4",
     ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
     command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh RWF_AIR {{run_id}} Job4",
     dag=dag)
 
 op_fail_mail = DummyOperator(
-    task_id='FailMail', 
+    task_id='WF_fehlgeschlagen..Versand_Benachrichtigung', 
     trigger_rule= 'one_success',
     dag=dag
     )
@@ -194,6 +194,6 @@ op2 >> branch_op2 >> [op3, op_split]
 op3 >> branch_op3 >> [branch_op_succ, op_fail_mail]
 op_split >> [op_swf_a, op_swf_b, op3_]
 op_swf_a >> op_swf_c
-[op_swf_c, op_swf_b, op3_] >> op_join >> branch_op_succ
+[op_swf_c, op_swf_b, op3_] >> op_fork >> branch_op_succ
 branch_op_succ >> [op4, op_fail_mail]
 op_fail_mail >> op5
