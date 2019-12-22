@@ -70,7 +70,7 @@ op2 = SSHOperator(
 
 def branch_func_2(**kwargs):
     ti = kwargs['ti']
-    xcom_value = ti.xcom_pull(task_ids='Job2')
+    xcom_value = ti.xcom_pull(task_ids='Job1_erfolgreich..Job2')
     retCode = str(xcom_value)[-4:-3]
     print(retCode)
     if retCode == '0':
@@ -93,7 +93,7 @@ op3 = SSHOperator(
 
 def branch_func_3(**kwargs):
     ti = kwargs['ti']
-    xcom_value = ti.xcom_pull(task_ids='Job3')
+    xcom_value = ti.xcom_pull(task_ids='Job2_fehlgeschlagen..Job3')
     retCode = str(xcom_value)[-4:-3]
     print(retCode)
     if retCode == '0':
@@ -147,7 +147,7 @@ op_merge = DummyOperator(
 
 def branch_func_succ(**kwargs):
     ti = kwargs['ti']
-    xcom_value_1 = ti.xcom_pull(task_ids='Job2')
+    xcom_value_1 = ti.xcom_pull(task_ids='Job1_erfolgreich..Job2')
     print(xcom_value_1)
     retCode_1 = str(xcom_value_1)[-4:-3]
     xcom_value_2 = ti.xcom_pull(task_ids='Job1')
