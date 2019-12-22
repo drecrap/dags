@@ -32,7 +32,7 @@ latest_only = LatestOnlyOperator(
     dag=dag
     )
 
-dummy_wrapper = "/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh PWF_AIR {{var.value.run_id}}"
+dummy_wrapper = "/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh PWF_AIR {{run_id}}"
 
 op1 = SSHOperator(
     task_id="JObA",
