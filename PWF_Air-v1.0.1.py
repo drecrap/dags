@@ -35,31 +35,31 @@ latest_only = LatestOnlyOperator(
 op1 = SSHOperator(
     task_id="JObA",
     ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
-    command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh PWF_AIR {{run_id}} A",
+    command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh PWF_AIR {{var.value.run_id}} A",
     dag=dag)
 
 op2 = SSHOperator(
     task_id="JobB",
     ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
-    command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh PWF_AIR {{run_id}} B",
+    command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh PWF_AIR {{var.value.run_id}} B",
     dag=dag)
 
 op3 = SSHOperator(
     task_id="JobC",
     ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
-    command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh PWF_AIR {{run_id}} C",
+    command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh PWF_AIR {{var.value.run_id}} C",
     dag=dag)
 
 op4 = SSHOperator(
     task_id="JobD",
     ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
-    command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh PWF_AIR {{run_id}} D",
+    command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh PWF_AIR {{var.value.run_id}} D",
     dag=dag)
 
 op5 = SSHOperator(
     task_id="JobE",
     ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
-    command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh PWF_AIR {{run_id}} E",
+    command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh PWF_AIR {{var.value.run_id}} E",
     dag=dag)
 
 latest_only >> op1 >> op2 >> op3 >> op4 >> op5
