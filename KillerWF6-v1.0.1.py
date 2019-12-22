@@ -5,12 +5,10 @@ from airflow.operators.bash_operator import BashOperator
 from airflow.operators.latest_only_operator import LatestOnlyOperator
 from datetime import datetime, timedelta
 
-sshHook = SSHHook(ssh_conn_id='infa_ssh')
-
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': datetime(2019, 10, 9),
+    'start_date': datetime(2019, 5, 6),
     'email': ['airflow@example.com'],
     'email_on_failure': False,
     'email_on_retry': False,
@@ -23,7 +21,7 @@ default_args = {
 }
 
 dag = DAG(
-    'KillerWF6', 
+    'KillerWF6-v1.0.1', 
     default_args=default_args, 
     schedule_interval='0 0 6 * *'
     )
@@ -51,14 +49,14 @@ op1 = BashOperator(
 
 op2 = SSHOperator(
     task_id='echo_wait_WF_10',
-    ssh_hook=sshHook,
+    ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
     command=infa_wait_WF_10_bash,
     do_xcom_push=True,
     dag=dag)
 
 op3 = SSHOperator(
     task_id='echo_wait_WF_30',
-    ssh_hook=sshHook,
+    ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
     command=infa_wait_WF_30_bash,
     do_xcom_push=True,
     dag=dag)

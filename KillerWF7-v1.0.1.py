@@ -10,7 +10,7 @@ from airflow.operators.python_operator import BranchPythonOperator
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': datetime(2019, 10, 31),
+    'start_date': datetime(2019, 10, 7),
     'email': ['drechsler@integration-factory.de'],
     'email_on_failure': True,
     'email_on_retry': False,
@@ -23,7 +23,7 @@ default_args = {
 }
 
 dag = DAG(
-    'KillerWF7', 
+    'KillerWF7-v1.0.1', 
     default_args=default_args, 
     schedule_interval='0 0 7 * *'
     )

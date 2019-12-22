@@ -7,12 +7,10 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.latest_only_operator import LatestOnlyOperator
 from airflow.operators.python_operator import BranchPythonOperator
 
-sshHook = SSHHook(ssh_conn_id='infa_ssh')
-
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': datetime(2019, 10, 31),
+    'start_date': datetime(2019, 10, 4),
     'email': ['airflow@example.com'],
     'email_on_failure': False,
     'email_on_retry': False,
@@ -25,9 +23,9 @@ default_args = {
 }
 
 dag = DAG(
-    'KillerWF4A', 
+    'KillerWF4B-v1.0.1', 
     default_args=default_args, 
-    schedule_interval='0 0 3 * *'
+    schedule_interval='0 0 4 * *'
     )
 
 latest_only = LatestOnlyOperator(
@@ -35,21 +33,21 @@ latest_only = LatestOnlyOperator(
     dag=dag
     )
 
-infa_wait_WF_10_bash ="""
+infa_Fail_WF_bash ="""
 cd /cygdrive/c/Users/DRECRAP/Desktop
-./WFwrapper.sh DRECRAP Wait_WF_10; echo $?
+./WFwrapper.sh DRECRAP Fail_WF; echo $?
 """
 
 start_op = SSHOperator(
-    task_id="infa_Wait_WF_10",
-    ssh_hook=sshHook,
-    command=infa_wait_WF_10_bash,
+    task_id="infa_Fail_WF",
+    ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
+    command=infa_Fail_WF_bash,
     do_xcom_push=True,
     dag=dag)
 
 def branch_func(**kwargs):
     ti = kwargs['ti']
-    xcom_value = ti.xcom_pull(task_ids='infa_Wait_WF_10')
+    xcom_value = ti.xcom_pull(task_ids='infa_Fail_WF')
     retCode = str(xcom_value)[-4:-3]
     print(retCode)
     if retCode == '0':

@@ -7,8 +7,6 @@ from airflow.operators.python_operator import BranchPythonOperator
 # Dag is returned by a factory method
 def sub_dag_b(parent_dag_name, child_dag_name, start_date, schedule_interval):
 
-    sshHook = SSHHook(ssh_conn_id='infa_ssh')
-
     dag = DAG(
         '%s.%s' % (parent_dag_name, child_dag_name),
         schedule_interval=schedule_interval,
@@ -22,7 +20,7 @@ def sub_dag_b(parent_dag_name, child_dag_name, start_date, schedule_interval):
 
     op1 = SSHOperator(
         task_id="JobB1",
-        ssh_hook=sshHook,
+        ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
         command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh RWF_AIR {{run_id}} JobB1; echo $?",
         do_xcom_push=True,
         dag=dag
@@ -30,7 +28,7 @@ def sub_dag_b(parent_dag_name, child_dag_name, start_date, schedule_interval):
 
     op2 = SSHOperator(
         task_id="JobB2",
-        ssh_hook=sshHook,
+        ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
         command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh RWF_AIR {{run_id}} JobB2; echo $?",
         do_xcom_push=True,
         dag=dag
@@ -72,7 +70,7 @@ def sub_dag_b(parent_dag_name, child_dag_name, start_date, schedule_interval):
 
     op3 = SSHOperator(
         task_id="JobB3",
-        ssh_hook=sshHook,
+        ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
         command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh RWF_AIR {{run_id}} JobB3; echo $?",
         do_xcom_push=True,
         dag=dag
@@ -80,7 +78,7 @@ def sub_dag_b(parent_dag_name, child_dag_name, start_date, schedule_interval):
 
     op4 = SSHOperator(
         task_id="JobB4",
-        ssh_hook=sshHook,
+        ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
         command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh RWF_AIR {{run_id}} JobB4; echo $?",
         do_xcom_push=True,
         dag=dag

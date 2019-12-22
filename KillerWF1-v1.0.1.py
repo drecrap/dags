@@ -1,16 +1,12 @@
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
-from datetime import datetime, timedelta
-from airflow.contrib.hooks.ssh_hook import SSHHook 
 from airflow.operators.latest_only_operator import LatestOnlyOperator
-from airflow.contrib.operators.ssh_operator import SSHOperator
-
-sshHook = SSHHook(ssh_conn_id='infa_ssh')
+from datetime import datetime, timedelta
 
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': datetime(2019, 10, 9),
+    'start_date': datetime(2019, 10, 1),
     'email': ['airflow@example.com'],
     'email_on_failure': False,
     'email_on_retry': False,
@@ -23,9 +19,9 @@ default_args = {
 }
 
 dag = DAG(
-    'KillerWF3', 
+    'KillerWF1-v1.0.1', 
     default_args=default_args, 
-    schedule_interval='0 0 2 * *'
+    schedule_interval='0 0 1 * *'
     )
 
 latest_only = LatestOnlyOperator(
@@ -33,21 +29,13 @@ latest_only = LatestOnlyOperator(
     dag=dag
     )
 
-infa_wait_WF_10_bash ="""
-cd /cygdrive/c/Users/DRECRAP/Desktop
-./WFwrapper.sh DRECRAP Wait_WF_10; echo $?
+templated_command = """
+    echo hi
 """
 
-op1 = SSHOperator(
-    task_id="01_infa_wait_WF_10",
-    ssh_hook=sshHook,
-    command=infa_wait_WF_10_bash,
+t1 = BashOperator(
+    task_id='templated',
+    bash_command=templated_command,
     dag=dag)
 
-op2 = SSHOperator(
-    task_id="02_infa_wait_WF_10",
-    ssh_hook=sshHook,
-    command=infa_wait_WF_10_bash,
-    dag=dag)
-
-latest_only >> op1 >> op2
+latest_only >> t1

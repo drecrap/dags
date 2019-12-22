@@ -11,8 +11,6 @@ from SwfA import sub_dag_a
 from SwfB import sub_dag_b
 from SwfC import sub_dag_c
 
-sshHook = SSHHook(ssh_conn_id='infa_ssh')
-
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
@@ -37,7 +35,7 @@ latest_only = LatestOnlyOperator(
 
 op1 = SSHOperator(
     task_id="Job1",
-    ssh_hook=sshHook,
+    ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
     command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh RWF_AIR {{run_id}} Job1; echo $?",
     do_xcom_push=True,
     dag=dag)
@@ -66,7 +64,7 @@ op_branch_op1_fail = DummyOperator(
 
 op2 = SSHOperator(
     task_id="Job2",
-    ssh_hook=sshHook,
+    ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
     command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh RWF_AIR {{run_id}} Job2; echo $?",
     do_xcom_push=True,
     dag=dag)
@@ -89,7 +87,7 @@ branch_op2 = BranchPythonOperator(
 
 op3 = SSHOperator(
     task_id="Job3",
-    ssh_hook=sshHook,
+    ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
     command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh RWF_AIR {{run_id}} Job3; echo $?",
     do_xcom_push=True,
     dag=dag)
@@ -112,7 +110,7 @@ branch_op3 = BranchPythonOperator(
 
 op3_ = SSHOperator(
     task_id="Job3_",
-    ssh_hook=sshHook,
+    ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
     command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh RWF_AIR {{run_id}} Job3; echo $?",
     do_xcom_push=True,
     dag=dag)
@@ -174,7 +172,7 @@ branch_op_succ = BranchPythonOperator(
 
 op4 = SSHOperator(
     task_id="Job4",
-    ssh_hook=sshHook,
+    ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
     command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh RWF_AIR {{run_id}} Job4",
     dag=dag)
 
@@ -186,7 +184,7 @@ op_fail_mail = DummyOperator(
 
 op5 = SSHOperator(
     task_id="Job5",
-    ssh_hook=sshHook,
+    ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
     command="/cygdrive/c/Users/DRECRAP/Desktop/DummyWrapper/WFdummyWrapper.sh RWF_AIR {{run_id}} Job5",
     dag=dag)
 

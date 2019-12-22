@@ -8,7 +8,7 @@ from airflow.contrib.operators.ssh_operator import SSHOperator
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': datetime(2019, 10, 9),
+    'start_date': datetime(2019, 9, 1),
     'email': ['airflow@example.com'],
     'email_on_failure': False,
     'email_on_retry': False,

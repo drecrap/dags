@@ -7,12 +7,10 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.latest_only_operator import LatestOnlyOperator
 from airflow.operators.python_operator import BranchPythonOperator
 
-sshHook = SSHHook(ssh_conn_id='infa_ssh')
-
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': datetime(2019, 10, 31),
+    'start_date': datetime(2019, 10, 5),
     'email': ['airflow@example.com'],
     'email_on_failure': False,
     'email_on_retry': False,
@@ -25,7 +23,7 @@ default_args = {
 }
 
 dag = DAG(
-    'KillerWF5', 
+    'KillerWF5-v1.0.1', 
     default_args=default_args, 
     schedule_interval='0 0 5 * *'
     )
@@ -42,7 +40,7 @@ latest_only = LatestOnlyOperator(
 
 start_op = SSHOperator(
     task_id="infa_Fail_WF",
-    ssh_hook=sshHook,
+    ssh_hook=SSHHook(ssh_conn_id='infa_ssh'),
     command=infa_Fail_WF_bash,
     do_xcom_push=True,
     dag=dag)
