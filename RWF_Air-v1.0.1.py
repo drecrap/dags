@@ -123,21 +123,21 @@ op_split = DummyOperator(
     )
 
 op_swf_a = SubDagOperator(
-  subdag=sub_dag_a('RWF_Air', 'swfA', dag.start_date,
+  subdag=sub_dag_a('RWF_Air-v1.0.1', 'swfA', dag.start_date,
                  dag.schedule_interval),
   task_id='swfA',
   dag=dag,
 )
 
 op_swf_b = SubDagOperator(
-  subdag=sub_dag_b('RWF_Air', 'swfB', dag.start_date,
+  subdag=sub_dag_b('RWF_Air-v1.0.1', 'swfB', dag.start_date,
                  dag.schedule_interval),
   task_id='swfB',
   dag=dag,
 )
 
 op_swf_c = SubDagOperator(
-  subdag=sub_dag_c('RWF_Air', 'swfC', dag.start_date,
+  subdag=sub_dag_c('RWF_Air-v1.0.1', 'swfC', dag.start_date,
                  dag.schedule_interval),
   task_id='swfC',
   dag=dag,
@@ -155,8 +155,8 @@ def branch_func_succ(**kwargs):
     retCode_1 = str(xcom_value_1)[-4:-3]
     xcom_value_2 = ti.xcom_pull(task_ids='Job1')
     print(xcom_value_2)
-    xcom_value_42 = ti.xcom_pull(task_ids='branch_task_success', dag_id='RWF_Air.swfA', key='WfSucc')
-    print('RWF_Air.swfA WfSucc: %s' % xcom_value_42)
+    xcom_value_42 = ti.xcom_pull(task_ids='branch_task_success', dag_id='RWF_Air-v1.0.1.swfA', key='WfSucc')
+    print('RWF_Air-v1.0.1.swfA WfSucc: %s' % xcom_value_42)
     retCode_2 = str(xcom_value_2)[-4:-3]
     print(retCode_1)
     print(retCode_2)
