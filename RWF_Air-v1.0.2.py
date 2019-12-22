@@ -46,9 +46,9 @@ def branch_func_1(**kwargs):
     retCode = str(xcom_value)[-4:-3]
     print(retCode)
     if retCode == '0':
-        return 'Job2'
+        return 'Job1_erfolgreich..Job2'
     else:
-        return 'goto_branch_task_succ'
+        return 'Job1_fehlgeschlagen'
 
 branch_op1 = BranchPythonOperator(
     task_id='Prüfe_Job1-Erfolg',
@@ -74,9 +74,9 @@ def branch_func_2(**kwargs):
     retCode = str(xcom_value)[-4:-3]
     print(retCode)
     if retCode == '0':
-        return 'split'
+        return 'Job2_erfolgreich'
     else:
-        return 'Job3'
+        return 'Job2_fehlgeschlagen..Job3'
 
 branch_op2 = BranchPythonOperator(
     task_id='Prüfe_Job2-Erfolg',
@@ -97,9 +97,9 @@ def branch_func_3(**kwargs):
     retCode = str(xcom_value)[-4:-3]
     print(retCode)
     if retCode == '0':
-        return 'branch_task_succ'
+        return 'Prüfe_WF-Erfolg'
     else:
-        return 'FailMail'
+        return 'WF_fehlgeschlagen..Versand_Benachrichtigung'
 
 branch_op3 = BranchPythonOperator(
     task_id='Prüfe_Job3-Erfolg',
@@ -140,8 +140,8 @@ op_swf_c = SubDagOperator(
   dag=dag,
 )
 
-op_fork = DummyOperator(
-    task_id='Fork', 
+op_merge = DummyOperator(
+    task_id='Merge', 
     dag=dag
     )
 
@@ -158,9 +158,9 @@ def branch_func_succ(**kwargs):
     print(retCode_1)
     print(retCode_2)
     if retCode_1 == '0' and retCode_2 == '0':
-        return 'Job4'
+        return 'WF_erfolgreich..Job4'
     else:
-        return 'FailMail'
+        return 'WF_fehlgeschlagen..Versand_Benachrichtigung'
 
 branch_op_succ = BranchPythonOperator(
     task_id='Prüfe_WF-Erfolg',
@@ -194,6 +194,6 @@ op2 >> branch_op2 >> [op3, op_split]
 op3 >> branch_op3 >> [branch_op_succ, op_fail_mail]
 op_split >> [op_swf_a, op_swf_b, op3_]
 op_swf_a >> op_swf_c
-[op_swf_c, op_swf_b, op3_] >> op_fork >> branch_op_succ
+[op_swf_c, op_swf_b, op3_] >> op_merge >> branch_op_succ
 branch_op_succ >> [op4, op_fail_mail]
 op_fail_mail >> op5
